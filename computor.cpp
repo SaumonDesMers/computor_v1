@@ -1,5 +1,4 @@
 #include <iostream>
-#include <sstream>
 #include <vector>
 #include <algorithm>
 #include <cstdio>
@@ -31,7 +30,6 @@ struct Term {
 		this->degree = src.degree;
 		return *this;
 	}
-	~Term() {}
 
 	Term opposite() {
 		return Term(-coef, degree);
@@ -52,35 +50,13 @@ struct Term {
 			str.erase(i, 1);
 		return str;
 	}
-
-	Term operator+(const Term & rhs) {
-		if (this->degree != rhs.degree) {
-			cerr << "Error: you are performing arithmetic on terms with different degree in operator+(): " << this->degree << " != " << rhs.degree << endl;
-			exit(1);
-		}
-		return Term(this->coef + rhs.coef, degree);
-	}
-	Term operator-(const Term & rhs) {
-		if (this->degree != rhs.degree) {
-			cerr << "Error: you are performing arithmetic on terms with different degree in operator-(): " << this->degree << " != " << rhs.degree << endl;
-			exit(1);
-		}
-		return Term(this->coef - rhs.coef, degree);
-	}
 };
-
-ostream &operator<<(ostream & os, const Term & t) {
-	os << t.coef << " * X^" << t.degree;
-	return os;
-}
 
 struct Polynomial {
 
 	vector<Term> terms;
 	int degree;
 	string reduceForm;
-	float discriminant;
-	float solution[2];
 	const int max_solving_degree = 2;
 
 	Polynomial(string eq = "") : terms(vector<Term>()), degree(0), reduceForm("") {
@@ -120,19 +96,12 @@ struct Polynomial {
 		for (Term &rhs_t : rhs_terms) {
 			auto it = find_if(lhs_terms.begin(), lhs_terms.end(), [rhs_t](Term &lhs_t) { return lhs_t.degree == rhs_t.degree; });
 			if (it != lhs_terms.end()) {
-				// *it = *it + rhs_t.opposite();
 				it->coef -= rhs_t.coef;
 			} else {
 				lhs_terms.push_back(rhs_t.opposite());
 			}
 		}
 		terms = lhs_terms;
-
-		// remove null terms
-		remove_if(terms.begin(), terms.end(), [](Term &t) { return t.coef == 0; });
-
-		// sort by degree in descending order
-		sort(terms.begin(), terms.end(), [](Term &t1, Term &t2) { return t1.degree < t2.degree; });
 
 		// compute polynomial degree
 		for (Term &t : terms) degree = max(degree, t.degree);
@@ -145,9 +114,6 @@ struct Polynomial {
 				terms.push_back(Term(0, i));
 			}
 		}
-
-		// sort by degree in descending order
-		sort(terms.begin(), terms.end(), [](Term &t1, Term &t2) { return t1.degree < t2.degree; });
 
 		return 0;
 	}
@@ -168,34 +134,33 @@ struct Polynomial {
 
 	void solve() {
 
+		float discriminant, a, b, c, s1, s2;
 		if (degree == 0) {
 
-			float a = terms[0].coef;
-			if (a == 0)
+			if (terms[0].coef == 0)
 				cout << "There an infinit number of solution." << endl;
 			else
-				cout << "There is no solution.";
+				cout << "There is no solution." << endl;
 
 		} else if (degree == 1) {
 
-			float a = terms[1].coef, b = terms[0].coef;
 			cout << "The solution is:" << endl;
-			cout << -b / a << endl;
+			cout << -terms[0].coef / terms[1].coef << endl;
 
 		} else if (degree == 2) {
 
-			float a = terms[2].coef, b = terms[1].coef, c = terms[0].coef;
+			a = terms[2].coef, b = terms[1].coef, c = terms[0].coef;
 			discriminant = pow(b, 2) - 4 * a * c;
 			if (discriminant > 0) {
-				solution[0] = (-b + sqrt(discriminant)) / (2 * a);
-				solution[1] = (-b - sqrt(discriminant)) / (2 * a);
+				s1 = (-b + sqrt(discriminant)) / (2 * a);
+				s2 = (-b - sqrt(discriminant)) / (2 * a);
 				cout << "Discriminant is strictly negative, the solutions are:" << endl;
-				cout << solution[0] << endl;
-				cout << solution[1] << endl;
+				cout << s1 << endl;
+				cout << s2 << endl;
 			} else if (discriminant == 0) {
-				solution[0] = -b / (2 * a);
+				s1 = -b / (2 * a);
 				cout << "Discriminant is equal to zero, the solution is:" << endl;
-				cout << solution[0] << endl;
+				cout << s1 << endl;
 			} else {
 				cout << "Discriminant is strictly negative, there is no solution in R." << endl;
 			}
