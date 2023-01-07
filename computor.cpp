@@ -88,7 +88,7 @@ struct Polynomial {
 		}
 		for (string &str : rhs_terms_str) {
 			int coef, degree;
-			sscanf(str.c_str(), "%d * X^%d", &coef, &degree);
+			sscanf(str.c_str(), "%d*X^%d", &coef, &degree);
 			rhs_terms.push_back(Term(coef, degree));
 		}
 
@@ -154,7 +154,7 @@ struct Polynomial {
 			if (discriminant > 0) {
 				s1 = (-b + sqrt(discriminant)) / (2 * a);
 				s2 = (-b - sqrt(discriminant)) / (2 * a);
-				cout << "Discriminant is strictly negative, the solutions are:" << endl;
+				cout << "Discriminant is strictly positive, the two solutions are:" << endl;
 				cout << s1 << endl;
 				cout << s2 << endl;
 			} else if (discriminant == 0) {
