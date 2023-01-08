@@ -103,6 +103,9 @@ struct Polynomial {
 		}
 		terms = lhs_terms;
 
+		// remove terms with coef == 0
+		terms.erase(remove_if(terms.begin(), terms.end(), [](Term &t) { return t.coef == 0; }), terms.end());
+
 		// compute polynomial degree
 		for (Term &t : terms) degree = max(degree, t.degree);
 
