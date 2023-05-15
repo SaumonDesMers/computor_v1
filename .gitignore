@@ -1,4 +1,7 @@
 .vscode
-dep
-obj
-computor
+
+c++/dep
+c++/obj
+c++/computor
+
+rust/target/*
