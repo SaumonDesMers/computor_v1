@@ -16,9 +16,10 @@ fn main() {
 		return;
 	}
 
-	let mut eq = String::from(&args[1]);
+	let mut eq: String = String::from(&args[1]);
+	eq.retain(|c: char| c != ' ');
+	eq = dbg!(eq);
 
-	eq.retain(|c| c != ' ');
-
-	dbg!(eq);
+	let degree = eq.matches("X").count();
+	dbg!(degree);
 }
